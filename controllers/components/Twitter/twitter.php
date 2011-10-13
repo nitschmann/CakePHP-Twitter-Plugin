@@ -61,9 +61,10 @@
 		  * Connect app to twitter and let it authorize through the user.
 		  * 
 		  * @param string $callback_url Url where Twitter should redirect after authorisation 
+		  * @param string $action action from twitter api 
 		  * @access public  
 		  */
-		 public function connectApp($callback_url) {
+		 public function connectApp($callback_url, $action='authorize') {
 			$request = array(
 			    'uri' => array(
 			      'host' => 'api.twitter.com',
@@ -80,9 +81,19 @@
 			  $response = $this->Oauth->request($request);
 			  //Redirect user to twitter to authorize application
 			  parse_str($response, $response);
-			  header('Location: http://api.twitter.com/oauth/authorize?oauth_token=' . $response['oauth_token']);
+			  header("Location: http://api.twitter.com/oauth/$action?oauth_token={$response['oauth_token']}");
 		}
-					  
+
+			/*
+		  * Authenticate User with their twitter account.
+		  * 
+		  * @param string $callback_url Url where Twitter should redirect after authentication 
+		  * @access public  
+		  */
+		public function signIn($callback_url) {
+      $this->connectApp($callback_url, 'authenticate');
+		}		  
+
 		/*
 		 * OAuth token and OAuth token secret (The user vars)
 		 * 
